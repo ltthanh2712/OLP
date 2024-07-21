@@ -28,12 +28,15 @@ vector<string> infixToPostFix(vector<string>& infix){
     vector<string> postfix;
     stack<string> st;
     for(int i = 0; i < infix.size();i++){
+        // If the string is an operand, push back it to vector "postfix"
         if(isNumber(infix[i])){
             postfix.push_back(infix[i]);
         }
+            // If the string is "(", push it to stack
         else if(infix[i] == "("){
             st.push(infix[i]);
         }
+            // If the string is ")", push to postfix and pop the topmost item of the stack until an "(" is encountered
         else if(infix[i] == ")"){
             while(!st.empty() && st.top() != "("){
                 postfix.push_back(st.top());
@@ -41,6 +44,8 @@ vector<string> infixToPostFix(vector<string>& infix){
             }
             st.pop();
         }
+            /* If the string is Operator, push to postfix and pop the topmost item of the stack if it has
+            greater than or equal precedence with this operator */
         else if(isOperator(infix[i])){
             while(!st.empty() && operatorPrecedence(infix[i]) <= operatorPrecedence(st.top())){
                 postfix.push_back(st.top());
@@ -49,6 +54,7 @@ vector<string> infixToPostFix(vector<string>& infix){
             st.push(infix[i]);
         }
     }
+    // push to postfix and pop the topmost item of the stack until the stack is empty
     while(!st.empty()){
         postfix.push_back(st.top());
         st.pop();
@@ -73,13 +79,13 @@ double calculator(string s,double num1,double num2){
         return num2/=num1;
     }
 }
-double calPostfix(vector<string>& s){
+double calPostfix(vector<string>& postfix){
     stack<double> st;
-    for(int i = 0; i < s.size(); i++)
+    for(int i = 0; i < postfix.size(); i++)
     {
-        if (s[i] != "+" && s[i] != "-" && s[i] != "*" && s[i] != "/")
+        if (isNumber(postfix[i]))
         {
-            int soNguyen = stoi(s[i]);
+            int soNguyen = stoi(postfix[i]);
             st.push(soNguyen);
         }
         else
@@ -88,7 +94,7 @@ double calPostfix(vector<string>& s){
             st.pop();
             double num2 = st.top();
             st.pop();
-            double result = calculator(s[i],num1,num2);
+            double result = calculator(postfix[i],num1,num2);
             st.push(result);
         }
     }
@@ -100,7 +106,7 @@ int main()
     while(true){
         string input;
         cin >> input;
-        if(input == "e") //Nhập vào kí tự "e" để dừng việc nhập
+        if(input == "e") //Enter the character "e" to stop typing
         {
             break;
         }
